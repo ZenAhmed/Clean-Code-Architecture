@@ -1,0 +1,70 @@
+*Infrastructure Layer----> if we are interacting with database all our repositories will take place in this layer
+		-----> DBContext Configuration
+
+*Core Layer -------> Data tranfer objects (DTOs)
+	   ---------> Entities
+
+
+
+
+1) Adding DI (Dependency Injection) class for each layer
+
+	public static class DependencyInjectionInfrastructure
+	{
+   		public static IServiceCollection AddInfrastructureDI(this IServiceCollection service)
+   		{
+        			return service;
+    		}
+	}
+
+2) Add project references
+
+	Main project(CleanCodeArch.Api) <------- CleanCodeArch.Application
+	CleanCodeArch.Application <-----------------CleanCodeArch.Core
+	CleanCodeArch.Infrastructure<--------------CleanCodeArch.Application
+	Main project(CleanCodeArch.Api) <------- CleanCodeArch.Infrastructure
+
+3) Calling All DI classes in MainApplication(CleanCodeArch.Api) by creating a seperate DependencyInjectionAPI class in MainApplication(CleanCodeArch.Api)
+
+	public static class DependencyInjectionAPI
+	{
+    		public static IServiceCollection ApiDI (this IServiceCollection services)
+    		{
+        			services.AddApplicationDI().AddInfrastructureDI().AddCoreDI();
+        			return services;
+    		}
+	}
+4) Add packages to 
+*CleanCodeArch.Infrastructure
+	--------->Microsoft.EntityFrameworkCore
+	-------->Microsoft.EntityFrameworkCore.SqlServer
+	-------->Microsoft.EntityFrameworkCore.Tools
+*CleanCodeArch.API
+	-------->Microsoft.EntityFrameworkCore.Design
+
+5) Add "Data" folder in CleanCodeArch.Infrastructure and add AppDbContext.cs class and register the class in layer specific DI class
+6) Adding Entities folder in CleanCodeArch.Core and define entities
+7)Now run Migrations.
+8)Add "Repositories" folder in CleanCodeArch.Infrastructure and add EmployeeRepo.cs class iherited from IEmployee class in CleanCodeArch.Core/Interfaces
+9)Add MediatR package in CleanCodeArch.Application
+10) Add "Commands(Everytime we want to make changes to database we use commands)" and "Queries(Everytime we want to retrieve data from database we use Queries)" folder in CleanCodeArch.Application
+11) In "Commands" folder AddEmployeeCommand.cs contains MediatR logic for Adding Employee
+
+	using CleanCodeArch.Core.Entities;
+	using CleanCodeArch.Core.Interfaces;
+	using MediatR;
+
+	namespace CleanCodeArch.Application.Commands
+	{
+		public record AddEmployeeCommand(Employee employee) : IRequest<Employee>;
+
+		public class AddEmployeeCommandHAndler(IEmployee iemployee) : IRequestHandler<AddEmployeeCommand, Employee>
+    		{
+        			public async Task<Employee> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
+        			{
+            				return await iemployee.AddEmployee(request.employee);
+        			}
+    		}
+
+
+	}
