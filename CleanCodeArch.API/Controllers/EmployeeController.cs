@@ -27,21 +27,21 @@ namespace CleanCodeArch.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeeEntity entity)
         {
-            var result = await sender.Send(new AddEmployeeCommand(entity));
+            await sender.Send(new AddEmployeeCommand(entity));
             return Ok(entity);
         }
 
         [HttpPut("{employeeID}")]
         public async Task<IActionResult> UpdateEmployeeAsync([FromRoute] Guid employeeID, [FromBody] EmployeeEntity entity)
         {
-            var result = await sender.Send(new UpdateEmployeeCommand(employeeID ,entity));
+            await sender.Send(new UpdateEmployeeCommand(employeeID ,entity));
             return Ok();
         }
 
         [HttpDelete("{employeeID}")]
         public async Task<IActionResult> DeleteEmployee([FromRoute] Guid employeeID)
         {
-            var result = await sender.Send(new DeleteEmployeeCommand(employeeID));
+            await sender.Send(new DeleteEmployeeCommand(employeeID));
             return Ok();
         }
     }

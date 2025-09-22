@@ -10,7 +10,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.ApiDI(builder.Configuration);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
